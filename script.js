@@ -5,7 +5,7 @@ $(".btn").click(function()
        fetch(apiUrl).then(response => response.json())
        .then(data => 
         {
-            if(data)
+            if(data && (data.details!=null || data.temprature!= null || data.humidity!= null ))
             {
             document.getElementById("weatherDetails").classList.remove("hidden");
             document.getElementById("weatherDescription").innerText = "Weather: " + data.details;
