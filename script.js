@@ -1,18 +1,12 @@
-function getWeather() {
+$(".btn").click(function() 
+ {
     var city = document.getElementById("cityInput").value;
     var apiUrl = "https://city-weather-app-423809a004f4.herokuapp.com/api/v1/weather/" + city;
-
-    if(!checkCity(city))
-    {
-        console.log("City does not exist:", error);
-        alert("City Does not exist , Enter a correct city name.");
-    }
-    
-    else
-    {
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
+       fetch(apiUrl).then(response => response.json())
+       .then(data => 
+        {
+            if(data)
+            {
             document.getElementById("weatherDetails").classList.remove("hidden");
             document.getElementById("weatherDescription").innerText = "Weather: " + data.details;
             document.getElementById("temperature").innerText = "Temperature: " + data.temprature + "°C";
@@ -20,12 +14,29 @@ function getWeather() {
 
             // Set weather icon based on weather type
             var weatherIcon = document.getElementById("weatherIcon");
-            if (data.weather === "Clear") {
-                weatherIcon.innerHTML = '<img src="icons/clear.png" alt="Clear">';
-            } else if (data.weather === "Clouds") {
-                weatherIcon.innerHTML = '<img src="icons/clouds.png" alt="Clouds">';
-            } else if (data.weather === "Rain") {
-                weatherIcon.innerHTML = '<img src="icons/rain.png" alt="Rain">';
+            if (data.weather.includes("Clear")) {
+                weatherIcon.innerHTML = '<img src="weatherIcons/clear.png" alt="Clear">';
+            } else if (data.weather.includes("Clouds")) {
+                weatherIcon.innerHTML = '<img src="weatherIcons/clouds.png" alt="Clouds">';
+            } else if (data.weather.includes("Rain")) {
+                weatherIcon.innerHTML = '<img src="weatherIcons/rain.png" alt="Rain">';
+            }
+            else if (data.weather.includes("Hazy")) {
+            weatherIcon.innerHTML = '<img src="weatherIcons/hazy.png" alt="Hazy">';
+            }
+
+            var tempratureIcon = document.getElementById("tempratureIcon");
+            if (data.temprature <= 10) 
+            {
+                tempratureIcon.innerHTML = '<img src="weatherIcons/cold.png" alt="Cold">';
+            } 
+            else if (data.temprature > 10 && data.temprature <= 28)
+            {
+                tempratureIcon.innerHTML = '<img src="weatherIcons/temp.png" alt="Normal">';
+            } 
+            else
+            {
+                tempratureIcon.innerHTML = '<img src="weatherIcons/hot.png" alt="Hot">';
             }
 
             // Determine humidity comfort level
@@ -38,24 +49,11 @@ function getWeather() {
                 humidityLevel = "Lots of moisture in the air, becoming oppressive";
             }
             document.getElementById("humidity").innerText += " (" + humidityLevel + ")";
+           }
+           else
+           {
+            alert("No data found for the entered city : "+ city + " , Please enter correct city" );
+           }
         })
-        .catch(error => {
-            console.log("Error fetching weather data:", error);
-            alert("Error fetching weather data.Please Try Again");
-        });
-    }
-}
+})      
 
-function checkCity(city) 
-{
-    return fetch('Cities.txt')
-        .then(response => response.text())
-        .then(data => {
-            const cities = data.split('\n').map(city => city.trim());
-            return cities.includes(city);
-        })
-        .catch(error => {
-            console.error('Error fetching the cities file:', error);
-            return false;
-        });
-}
